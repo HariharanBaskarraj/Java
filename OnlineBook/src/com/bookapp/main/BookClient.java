@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Scanner;
 import com.bookapp.bean.Book;
 import com.bookapp.exceptions.*;
-import com.bookapp.services.BookImplementation;
+import com.bookapp.services.*;
 
 public class BookClient {
 
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
-		BookImplementation bookImpl = new BookImplementation();
+		BookInterface bookImpl = new BookImplementation();
 
 		Book book = null;
 		for (int i = 0; i < 2; i++) {
