@@ -44,7 +44,7 @@ public class ElectionValidation {
 
 	public boolean checkEligibility(int age, String locality, int voterID) throws NotEligibleException {
 		int valid = 0;
-		boolean result = false;
+		boolean result = true;
 
 		try {
 			if (checkAge(age)) {
@@ -77,8 +77,8 @@ public class ElectionValidation {
 			System.out.println("Kindly see the validation results below.....");
 		}
 
-		if (valid == 3) {
-			result = true;
+		if (valid != 3) {
+			throw new NotEligibleException("YOU ARE NOT ELIGIBLE FOR VOTING!!!");
 		}
 		return result;
 	}

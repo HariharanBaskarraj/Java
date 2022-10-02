@@ -16,22 +16,20 @@ public class VoterMain {
 		String locality = sc.nextLine();
 		System.out.println("Enter your voter ID");
 		int voterID = sc.nextInt();
-		
+
 		boolean validity = false;
 		try {
 			validity = validation.checkEligibility(age, locality, voterID);
 		} catch (NotEligibleException e) {
-			e.getMessage();
+			System.out.println(e.getMessage());
 		}
 		System.out.println();
 
 		if (validity) {
 			System.out.println("YOU ARE ELIGIBLE FOR VOTING.\nMAKE SURE YOU VOTE ON THE ELECTION DAY.");
-		} else {
-			System.out.println("YOU ARE NOT ELIGIBLE FOR VOTING.");
 		}
-
 		sc.close();
+
 	}
 
 }
