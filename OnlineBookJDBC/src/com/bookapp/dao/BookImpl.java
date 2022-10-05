@@ -62,20 +62,16 @@ public class BookImpl implements BookInter {
 			statement.setInt(1, bookid);
 			resultset = statement.executeQuery();
 			resultset.beforeFirst();
-
-			if (resultset.next() == true) {
-				resultset.beforeFirst();
-				while (resultset.next() == true) {
-					book.setTitle(resultset.getString(1));
-					book.setAuthor(resultset.getString(2));
-					book.setBookID(resultset.getInt(3));
-					book.setCategory(resultset.getString(4));
-					book.setPrice(resultset.getDouble(5));
-				}
-			} else {
+			if (!resultset.next())
 				throw new BookNotFoundException("No books match your description.");
+			resultset.beforeFirst();
+			while (resultset.next()) {
+				book.setTitle(resultset.getString(1));
+				book.setAuthor(resultset.getString(2));
+				book.setBookID(resultset.getInt(3));
+				book.setCategory(resultset.getString(4));
+				book.setPrice(resultset.getDouble(5));
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -103,7 +99,7 @@ public class BookImpl implements BookInter {
 	}
 
 	@Override
-	public List<Book> getAllBooks() {
+	public List<Book> getAllBooks() throws BookNotFoundException {
 		List<Book> bookList = new ArrayList<Book>();
 		Book book = null;
 		try {
@@ -114,21 +110,18 @@ public class BookImpl implements BookInter {
 					ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			resultset = statement.executeQuery();
 			resultset.beforeFirst();
-			if (resultset.next() == true) {
-				resultset.beforeFirst();
-				while (resultset.next() == true) {
-					book = new Book();
-					book.setTitle(resultset.getString(1));
-					book.setAuthor(resultset.getString(2));
-					book.setBookID(resultset.getInt(3));
-					book.setCategory(resultset.getString(4));
-					book.setPrice(resultset.getDouble(5));
-					bookList.add(book);
-				}
-			} else {
-				System.out.println("No books match your description.");
+			if (!resultset.next())
+				throw new BookNotFoundException("No books match your description.");
+			resultset.beforeFirst();
+			while (resultset.next() == true) {
+				book = new Book();
+				book.setTitle(resultset.getString(1));
+				book.setAuthor(resultset.getString(2));
+				book.setBookID(resultset.getInt(3));
+				book.setCategory(resultset.getString(4));
+				book.setPrice(resultset.getDouble(5));
+				bookList.add(book);
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -139,7 +132,7 @@ public class BookImpl implements BookInter {
 
 	@Override
 	public List<Book> getBookbyAuthor(String author) throws AuthorNotFoundException {
-		List<Book> authorList = new ArrayList<Book>();
+		List<Book> bookList = new ArrayList<Book>();
 		Book book = null;
 		try {
 			ResultSet resultset;
@@ -150,33 +143,29 @@ public class BookImpl implements BookInter {
 			statement.setString(1, author);
 			resultset = statement.executeQuery();
 			resultset.beforeFirst();
-
-			if (resultset.next() == true) {
-				resultset.beforeFirst();
-				while (resultset.next() == true) {
-					book = new Book();
-					book.setTitle(resultset.getString(1));
-					book.setAuthor(resultset.getString(2));
-					book.setBookID(resultset.getInt(3));
-					book.setCategory(resultset.getString(4));
-					book.setPrice(resultset.getDouble(5));
-					authorList.add(book);
-				}
-			} else {
-				System.out.println("No books match your description.");
+			if (!resultset.next())
+				throw new AuthorNotFoundException("No books match your description.");
+			resultset.beforeFirst();
+			while (resultset.next()) {
+				book = new Book();
+				book.setTitle(resultset.getString(1));
+				book.setAuthor(resultset.getString(2));
+				book.setBookID(resultset.getInt(3));
+				book.setCategory(resultset.getString(4));
+				book.setPrice(resultset.getDouble(5));
+				bookList.add(book);
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			ModelDAO.closeConnection();
 		}
-		return authorList;
+		return bookList;
 	}
 
 	@Override
 	public List<Book> getBookbyCategory(String category) throws CategoryNotFoundException {
-		List<Book> categoryList = new ArrayList<Book>();
+		List<Book> bookList = new ArrayList<Book>();
 		Book book = null;
 		try {
 			ResultSet resultset;
@@ -188,19 +177,17 @@ public class BookImpl implements BookInter {
 			resultset = statement.executeQuery();
 			resultset.beforeFirst();
 
-			if (resultset.next() == true) {
-				resultset.beforeFirst();
-				while (resultset.next() == true) {
-					book = new Book();
-					book.setTitle(resultset.getString(1));
-					book.setAuthor(resultset.getString(2));
-					book.setBookID(resultset.getInt(3));
-					book.setCategory(resultset.getString(4));
-					book.setPrice(resultset.getDouble(5));
-					categoryList.add(book);
-				}
-			} else {
-				System.out.println("No books match your description.");
+			if (!resultset.next())
+				throw new CategoryNotFoundException("No books match your description.");
+			resultset.beforeFirst();
+			while (resultset.next()) {
+				book = new Book();
+				book.setTitle(resultset.getString(1));
+				book.setAuthor(resultset.getString(2));
+				book.setBookID(resultset.getInt(3));
+				book.setCategory(resultset.getString(4));
+				book.setPrice(resultset.getDouble(5));
+				bookList.add(book);
 			}
 
 		} catch (SQLException e) {
@@ -208,7 +195,7 @@ public class BookImpl implements BookInter {
 		} finally {
 			ModelDAO.closeConnection();
 		}
-		return categoryList;
+		return bookList;
 	}
 
 }

@@ -95,16 +95,22 @@ public class BookClient {
 
 			case 5:
 				System.out.println("Getting all the books");
-				List<Book> bookList = bookInter.getAllBooks();
-				bookList.forEach(System.out::println);
+				List<Book> bookList;
+				try {
+					bookList = bookInter.getAllBooks();
+					bookList.forEach(System.out::println);
+				} catch (BookNotFoundException e) {
+					e.printStackTrace();
+				}
+				
 				break;
 
 			case 6:
 				try {
 					System.out.println("Getting book by author\nEnter the author's name");
 					String author = sc.nextLine();
-					List<Book> authorList = bookInter.getBookbyAuthor(author);
-					authorList.forEach(System.out::println);
+					bookList = bookInter.getBookbyAuthor(author);
+					bookList.forEach(System.out::println);
 				} catch (AuthorNotFoundException e) {
 					e.printStackTrace();
 				}
@@ -114,8 +120,8 @@ public class BookClient {
 				try {
 					System.out.println("Getting book by category\nEnter the category");
 					String category = sc.nextLine();
-					List<Book> categoryList = bookInter.getBookbyCategory(category);
-					categoryList.forEach(System.out::println);
+					bookList = bookInter.getBookbyCategory(category);
+					bookList.forEach(System.out::println);
 				} catch (CategoryNotFoundException e) {
 					e.printStackTrace();
 				}

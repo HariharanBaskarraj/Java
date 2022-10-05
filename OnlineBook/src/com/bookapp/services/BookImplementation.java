@@ -36,10 +36,7 @@ public class BookImplementation implements BookInterface {
 		}
 		return authorList;
 	}
-//
-//	Predicate<String> pred = (str)->str.equals("hello")
-//	Predicate<Book> pred = (book)->book.getCatgeory().equals("tech") 		
-//	pred.test(bookobj);
+
 	@Override
 	public List<Book> getBookbyCategory(String category) throws CategoryNotFoundException {
 		List<Book> categoryList =bookList.stream()

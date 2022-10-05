@@ -14,7 +14,7 @@ public interface BookInter {
 
 	boolean updateBook(int bookid, double price);
 
-	List<Book> getAllBooks();
+	List<Book> getAllBooks() throws BookNotFoundException;
 
 	List<Book> getBookbyAuthor(String author) throws AuthorNotFoundException;
 
