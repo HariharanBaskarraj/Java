@@ -41,12 +41,10 @@ public class BookImpl implements BookInter {
 
 			statement = connection.prepareStatement("DELETE FROM ONLINEBOOK WHERE BOOKID=?;");
 			statement.setInt(1, bookid);
-			int res = statement.executeUpdate();
-			if (res > 0) {
-				System.out.println("Book deleted");
-			} else {
-				System.out.println("Book ID not available");
-			}
+			int result = statement.executeUpdate();
+			if (result == 0) 
+				throw new BookNotFoundException("Book ID not available"); 
+			System.out.println("Book deleted");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
