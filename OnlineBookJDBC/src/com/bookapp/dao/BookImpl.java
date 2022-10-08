@@ -9,10 +9,9 @@ public class BookImpl implements BookInter {
 
 	@Override
 	public void addBook(Book book) {
-
+		PreparedStatement statement = null;
+		Connection connection = ModelDAO.openConnection();
 		try {
-			PreparedStatement statement = null;
-			Connection connection = ModelDAO.openConnection();
 			statement = connection.prepareStatement("INSERT INTO ONLINEBOOK VALUES(?,?,?,?,?);");
 			statement.setString(1, book.getTitle());
 			statement.setString(2, book.getAuthor());
@@ -20,21 +19,27 @@ public class BookImpl implements BookInter {
 			statement.setString(4, book.getCategory());
 			statement.setDouble(5, book.getPrice());
 			statement.execute();
-			System.out.println("Book added");
-		} catch (SQLException e) {
+			System.out.println("Book added.");
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
+			try {
+				if (statement != null)
+					statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			ModelDAO.closeConnection();
 		}
-
 	}
 
 	@Override
 	public boolean deleteBook(int bookid) throws BookNotFoundException {
+		PreparedStatement statement = null;
+		Connection connection = ModelDAO.openConnection();
 		try {
-			PreparedStatement statement = null;
-			ModelDAO.openConnection();
-			statement = ModelDAO.connection.prepareStatement("DELETE FROM ONLINEBOOK WHERE BOOKID=?;");
+
+			statement = connection.prepareStatement("DELETE FROM ONLINEBOOK WHERE BOOKID=?;");
 			statement.setInt(1, bookid);
 			int res = statement.executeUpdate();
 			if (res > 0) {
@@ -45,6 +50,12 @@ public class BookImpl implements BookInter {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+			try {
+				if (statement != null)
+					statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			ModelDAO.closeConnection();
 		}
 		return true;
@@ -52,12 +63,13 @@ public class BookImpl implements BookInter {
 
 	@Override
 	public Book getBookById(int bookid) throws BookNotFoundException {
-		Book book = new Book();
+		Book book = null;
+		PreparedStatement statement = null;
+		Connection connection = ModelDAO.openConnection();
 		try {
+			book = new Book();
 			ResultSet resultset;
-			PreparedStatement statement = null;
-			ModelDAO.openConnection();
-			statement = ModelDAO.connection.prepareStatement("SELECT * FROM ONLINEBOOK WHERE BOOKID=?;",
+			statement = connection.prepareStatement("SELECT * FROM ONLINEBOOK WHERE BOOKID=?;",
 					ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			statement.setInt(1, bookid);
 			resultset = statement.executeQuery();
@@ -75,24 +87,38 @@ public class BookImpl implements BookInter {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+			try {
+				if (statement != null)
+					statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			ModelDAO.closeConnection();
 		}
 		return book;
 	}
 
 	@Override
-	public boolean updateBook(int bookid, double price) {
+	public boolean updateBook(int bookid, double price) throws BookNotFoundException {
+		PreparedStatement statement = null;
+		Connection connection = ModelDAO.openConnection();
 		try {
-			PreparedStatement statement = null;
-			ModelDAO.openConnection();
-			statement = ModelDAO.connection.prepareStatement("UPDATE ONLINEBOOK SET PRICE=? WHERE BOOKID=?;");
+			statement = connection.prepareStatement("UPDATE ONLINEBOOK SET PRICE=? WHERE BOOKID=?;");
 			statement.setDouble(1, price);
 			statement.setInt(2, bookid);
-			statement.execute();
+			int result = statement.executeUpdate();
+			if(result==0)
+				throw new BookNotFoundException("Book ID not available. Not updated.");
 			System.out.println("Updated");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+			try {
+				if (statement != null)
+					statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			ModelDAO.closeConnection();
 		}
 		return true;
@@ -101,19 +127,19 @@ public class BookImpl implements BookInter {
 	@Override
 	public List<Book> getAllBooks() throws BookNotFoundException {
 		List<Book> bookList = new ArrayList<Book>();
+		PreparedStatement statement = null;
+		Connection connection = ModelDAO.openConnection();
 		Book book = null;
 		try {
 			ResultSet resultset;
-			PreparedStatement statement = null;
-			ModelDAO.openConnection();
-			statement = ModelDAO.connection.prepareStatement("SELECT * FROM ONLINEBOOK;",
-					ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			statement = connection.prepareStatement("SELECT * FROM ONLINEBOOK;", ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
 			resultset = statement.executeQuery();
 			resultset.beforeFirst();
 			if (!resultset.next())
 				throw new BookNotFoundException("No books match your description.");
 			resultset.beforeFirst();
-			while (resultset.next() == true) {
+			while (resultset.next()) {
 				book = new Book();
 				book.setTitle(resultset.getString(1));
 				book.setAuthor(resultset.getString(2));
@@ -125,6 +151,12 @@ public class BookImpl implements BookInter {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+			try {
+				if (statement != null)
+					statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			ModelDAO.closeConnection();
 		}
 		return bookList;
@@ -133,12 +165,12 @@ public class BookImpl implements BookInter {
 	@Override
 	public List<Book> getBookbyAuthor(String author) throws AuthorNotFoundException {
 		List<Book> bookList = new ArrayList<Book>();
+		PreparedStatement statement = null;
+		Connection connection = ModelDAO.openConnection();
 		Book book = null;
 		try {
 			ResultSet resultset;
-			PreparedStatement statement = null;
-			ModelDAO.openConnection();
-			statement = ModelDAO.connection.prepareStatement("SELECT * FROM ONLINEBOOK WHERE AUTHOR=?;",
+			statement = connection.prepareStatement("SELECT * FROM ONLINEBOOK WHERE AUTHOR=?;",
 					ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			statement.setString(1, author);
 			resultset = statement.executeQuery();
@@ -158,7 +190,12 @@ public class BookImpl implements BookInter {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			ModelDAO.closeConnection();
+			try {
+				if (statement != null)
+					statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return bookList;
 	}
@@ -166,17 +203,16 @@ public class BookImpl implements BookInter {
 	@Override
 	public List<Book> getBookbyCategory(String category) throws CategoryNotFoundException {
 		List<Book> bookList = new ArrayList<Book>();
+		PreparedStatement statement = null;
+		Connection connection = ModelDAO.openConnection();
 		Book book = null;
 		try {
 			ResultSet resultset;
-			PreparedStatement statement = null;
-			ModelDAO.openConnection();
-			statement = ModelDAO.connection.prepareStatement("SELECT * FROM ONLINEBOOK WHERE CATEGORY=?;",
+			statement = connection.prepareStatement("SELECT * FROM ONLINEBOOK WHERE CATEGORY=?;",
 					ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			statement.setString(1, category);
 			resultset = statement.executeQuery();
 			resultset.beforeFirst();
-
 			if (!resultset.next())
 				throw new CategoryNotFoundException("No books match your description.");
 			resultset.beforeFirst();
@@ -189,13 +225,16 @@ public class BookImpl implements BookInter {
 				book.setPrice(resultset.getDouble(5));
 				bookList.add(book);
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			ModelDAO.closeConnection();
+			try {
+				if (statement != null)
+					statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return bookList;
 	}
-
 }

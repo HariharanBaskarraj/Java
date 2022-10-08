@@ -12,7 +12,7 @@ public interface BookInter {
 
 	Book getBookById(int bookid) throws BookNotFoundException;
 
-	boolean updateBook(int bookid, double price);
+	boolean updateBook(int bookid, double price) throws BookNotFoundException;
 
 	List<Book> getAllBooks() throws BookNotFoundException;
 
