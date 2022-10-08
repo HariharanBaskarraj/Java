@@ -104,8 +104,8 @@ public class BookImpl implements BookInter {
 			statement = connection.prepareStatement("UPDATE ONLINEBOOK SET PRICE=? WHERE BOOKID=?;");
 			statement.setDouble(1, price);
 			statement.setInt(2, bookid);
-			int result = statement.executeUpdate();
-			if (result == 0)
+			boolean result = statement.execute();
+			if (!result)
 				throw new BookNotFoundException("Book ID not available. Not updated.");
 			System.out.println("Updated");
 		} catch (SQLException e) {
