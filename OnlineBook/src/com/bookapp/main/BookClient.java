@@ -1,6 +1,5 @@
 package com.bookapp.main;
 
-import java.util.List;
 import java.util.Scanner;
 import com.bookapp.bean.Book;
 import com.bookapp.exceptions.*;
@@ -13,7 +12,10 @@ public class BookClient {
 		BookInterface bookImpl = new BookImplementation();
 
 		Book book = null;
-		for (int i = 0; i < 2; i++) {
+		System.out.println("Enter the number of books to add: ");
+		int count =sc.nextInt();sc.nextLine();
+		System.out.println("Enter book details to add...");
+		for (int i = 0; i < count; i++) {
 			book = new Book();
 			System.out.println("Enter Book title:");
 			book.setTitle(sc.nextLine());
@@ -28,25 +30,28 @@ public class BookClient {
 			book.setPrice(sc.nextDouble());
 			sc.nextLine();
 			bookImpl.addBook(book);
+			System.out.println("Book "+(i+1)+" added...\n");
 		}
 
-		System.out.println(bookImpl.getAllBooks() + "\n");
+		System.out.println("Getting all the books: ");
+		bookImpl.getAllBooks().forEach(System.out::println);
 
 		for (;;) {
+			System.out.println("\nGetting books by author: ");
 			try {
 				System.out.println("Enter the author to search");
 				String author = sc.nextLine();
-				List<Book> booksByAuthor = bookImpl.getBookbyAuthor(author);
-				booksByAuthor.forEach(System.out::println);
+				bookImpl.getBookbyAuthor(author).forEach(System.out::println);
 			} catch (AuthorNotFoundException e) {
 				System.out.println(e.getMessage() + "\n");
 			}
 
+			System.out.println("Getting books by genre: ");
 			try {
 				System.out.println("Enter the genre to search");
 				String genre=sc.nextLine();
-				List<Book> booksByCategory=bookImpl.getBookbyCategory(genre);
-				booksByCategory.forEach(System.out::println);
+				bookImpl.getBookbyCategory(genre).forEach(System.out::println);
+				System.out.println();
 			} catch (CategoryNotFoundException e) {
 				System.out.println(e.getMessage() + "\n");
 			}
