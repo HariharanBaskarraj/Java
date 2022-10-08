@@ -42,8 +42,8 @@ public class BookImpl implements BookInter {
 			statement = connection.prepareStatement("DELETE FROM ONLINEBOOK WHERE BOOKID=?;");
 			statement.setInt(1, bookid);
 			int result = statement.executeUpdate();
-			if (result == 0) 
-				throw new BookNotFoundException("Book ID not available"); 
+			if (result == 0)
+				throw new BookNotFoundException("Book ID not available");
 			System.out.println("Book deleted");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -104,8 +104,8 @@ public class BookImpl implements BookInter {
 			statement = connection.prepareStatement("UPDATE ONLINEBOOK SET PRICE=? WHERE BOOKID=?;");
 			statement.setDouble(1, price);
 			statement.setInt(2, bookid);
-			boolean result = statement.execute();
-			if (!result)
+			int result = statement.executeUpdate();
+			if (result == 0)
 				throw new BookNotFoundException("Book ID not available. Not updated.");
 			System.out.println("Updated");
 		} catch (SQLException e) {
