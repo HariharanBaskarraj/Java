@@ -107,7 +107,7 @@ public class BookImpl implements BookInter {
 			statement.setDouble(1, price);
 			statement.setInt(2, bookid);
 			int result = statement.executeUpdate();
-			if(result==0)
+			if (result == 0)
 				throw new BookNotFoundException("Book ID not available. Not updated.");
 			System.out.println("Updated");
 		} catch (SQLException e) {
